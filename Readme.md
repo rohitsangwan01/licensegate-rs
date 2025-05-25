@@ -5,45 +5,48 @@
 [![Crates.io Downloads](https://img.shields.io/crates/d/licensegate-rs)](https://crates.io/crates/licensegate-rs)
 [![Crates.io License](https://img.shields.io/crates/l/licensegate-rs)](https://crates.io/crates/licensegate-rs)
 
-The`licensegate-rs` is an unofficial Rust SDK for integrating with the [Licensegate](https://licensegate.io/) licensing service
+`licensegate-rs` is an **unofficial Rust SDK** for integrating with the [LicenseGate](https://licensegate.io/) licensing and activation service.
 
-## Installation
+<a href="https://licensegate.io/">
+    <img src="https://licensegate.io/images/logo.svg" width="200" alt="LicenseGate Logo">
+</a>
 
-Add the following to your `Cargo.toml`:
+---
+
+## ✨ Features
+
+- License key verification with LicenseGate
+- Challenge-response (RSA public key) validation
+- Custom license scopes
+- Configurable LicenseGate server URL
+- Async-friendly API using `tokio`
+
+---
+
+## 📦 Installation
+
+Add the crate to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-licensegate = "0.1.0"
-
-# Or use git version
-# licensegate = { git = "https://github.com/rohitsangwan01/licensegate-rs" }
+licensegate-rs = "0.1.0"
 ```
 
-## Example
+## 🚀 Quick Start
 
-Run example
-
-```sh
-cargo run --example sample
-```
-
-## Usage
+Here’s a minimal example for verifying a license key:
 
 ```rust
-use licensegate::{LicenseGateVerifier, LicenseGateConfig, ValidationType};
+use licensegate::{LicenseGate, LicenseGateConfig, ValidationType};
 
 #[tokio::main]
 async fn main() {
-    let user_id = "Enter USER_ID";
+    let user_id = "ENTER_USER_ID";
     let license_key = "ENTER_LICENSE_KEY";
 
     let licensegate = LicenseGate::new(user_id);
 
-    let result = licensegate
-        .verify(LicenseGateConfig::new(license_key))
-        .await;
-
-    match result {
+    match licensegate.verify(LicenseGateConfig::new(license_key)).await {
         Ok(ValidationType::Valid) => println!("The key is valid."),
         Ok(reason) => println!("The key is invalid. Reason: {:?}", reason),
         Err(e) => eprintln!("Connection or server error: {:?}", e),
@@ -51,20 +54,42 @@ async fn main() {
 }
 ```
 
-### With Custom Server URL
+## ⚙️ Advanced Usage
+
+### Custom LicenseGate Server URL
 
 ```rust
-let licensegate = LicenseGate::new(user_id).set_validation_server("server");
+let licensegate = LicenseGate::new(user_id)
+    .set_validation_server("https://your.custom.server");
 ```
 
-### With Public RSA Key (Challenge Verification)
+### Public RSA Key for Challenge Verification
 
 ```rust
-let licensegate = LicenseGate::new(user_id).set_public_rsa_key("RSA_KEY");
+let licensegate = LicenseGate::new(user_id)
+    .set_public_rsa_key("PUBLIC_RSA_KEY");
 ```
 
-### With Scope
+## License Key with Scoped Access
 
 ```rust
-licensegate.verify(LicenseGateConfig::new(license_key).set_scope("scope")).await;
+let config = LicenseGateConfig::new(license_key)
+    .set_scope("pro");
+let result = licensegate.verify(config).await;
 ```
+
+## 📂 Run Example
+
+To test with the provided example:
+
+```bash
+cargo run --example sample
+```
+
+## 📚 Documentation
+
+Find full API docs on [docs.rs](https://docs.rs/licensegate-rs/)
+
+## 📝 License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT)
